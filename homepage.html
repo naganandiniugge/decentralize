@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome to Our Platform</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+        <div class="nav-logo">
+            <h2>My App</h2>
+        </div>
+        <!-- Profile Picture in Navbar -->
+        <div class="nav-profile">
+            <img id="navProfilePic" src="default_image.jpg" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;" />
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content -->
+    <!-- Removed the dashboard container as requested -->
+
+    <!-- Posts Feed Section -->
+    <section id="postsFeed" style="margin: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h3>Posts Feed</h3>
+        <div id="postsContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Posts will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="#" class="nav-item" id="searchIcon">
+                <span class="nav-icon">🔍</span>
+                <span class="nav-label">Search</span>
+            </a>
+            <a href="#" class="nav-item" id="addPostBtn">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Add</span>
+            </a>
+            <a href="#" class="nav-item" id="chatIcon">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Chat</span>
+            </a>
+        </div>
+    </nav>
+
+
+
+<script>
+    // Function to update profile picture from localStorage
+    function updateProfilePicture() {
+        const profilePicUrl = localStorage.getItem('profilePicture') || 'default_image.jpg';
+        const navProfilePic = document.getElementById('navProfilePic');
+        if (navProfilePic) {
+            navProfilePic.src = profilePicUrl;
+
+            // Add error handler to fallback to default image if loading fails
+            navProfilePic.onerror = () => {
+                navProfilePic.onerror = null; // Prevent infinite loop
+                navProfilePic.src = 'default_image.jpg';
+                localStorage.setItem('profilePicture', 'default_image.jpg');
+            };
+        }
+    }
+
+    // Validate profile picture URL in localStorage
+    function validateProfilePicture() {
+        const profilePicUrl = localStorage.getItem('profilePicture');
+        if (!profilePicUrl || profilePicUrl.trim() === '') {
+            localStorage.setItem('profilePicture', 'default_image.jpg');
+        }
+    }
+
+    // Load profile picture on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        validateProfilePicture();
+        updateProfilePicture();
+        
+        // Add click event to navigate to profile page
+        const navProfilePic = document.getElementById('navProfilePic');
+        if (navProfilePic) {
+            navProfilePic.addEventListener('click', () => {
+                window.location.href = 'profilepage.html';
+            });
+        }
+    });
+
+    // Listen for storage changes (profile picture updates from other tabs/pages)
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'profilePicture') {
+            updateProfilePicture();
+        }
+    });
+
+    // Listen for custom event (profile picture updates within same tab)
+    window.addEventListener('profilePictureUpdated', (event) => {
+        updateProfilePicture();
+        });
+
+        // Function to get Pinata JWT token securely
+        function getPinataJWT() {
+            // For security, do NOT hardcode your JWT here.
+            // Instead, you can:
+            // 1. Store it in environment variables and inject at build time
+            // 2. Fetch it securely from your backend API
+            // 3. Prompt user to enter it (not recommended for production)
+            // For demo, you can temporarily set it here:
+            return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxNmVlMWJmMC03M2Q5LTQyNGUtYWNkNC0wY2YwZDJmYzI0ZmYiLCJlbWFpbCI6Im5hbmRpbmluYWdhMjFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjNhOWU4MTUxM2U3YzgxZTI2ZDExIiwic2NvcGVkS2V5U2VjcmV0IjoiMmE5MzdjMzYwZDVlM2Y1YTRjMTg5Njc4MzBlOTJlMGUyNTY4ZTEwMzQ3OTc0M2VmODgzMWQ4N2M5MGVlZDlhOCIsImV4cCI6MTc4NzE5OTQ5OX0.sbhtvV5RdsEbe93oE0hC7HKoW80F0QYff4dnfRQlEbo';
+        }
+    </script>
+    <!-- Search Toolbox -->
+    <div id="searchToolbox" class="search-toolbox" style="display:none;">
+        <input type="text" id="searchInput" placeholder="Search by email ID" />
+        <button id="searchBtn">Search</button>
+        <div id="searchResult" class="search-result"></div>
+        <button id="closeSearchBtn">Close</button>
+    </div>
+
+    <!-- Post Creation Modal -->
+    <div id="postModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closePostModal">&times;</span>
+            <h3>Create a Post</h3>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="postFiles">Select Images/Videos/GIFs:</label>
+                    <input type="file" id="postFiles" name="postFiles" accept="image/*,video/*,image/gif" multiple />
+                </div>
+                <div class="form-group">
+                    <label for="postContent">Content:</label>
+                    <textarea id="postContent" name="postContent" rows="4" placeholder="Write something..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Share with:</label>
+                    <div>
+                        <input type="radio" id="shareEveryone" name="shareAudience" value="everyone" checked />
+                        <label for="shareEveryone">Everyone</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="shareContacts" name="shareAudience" value="contacts" />
+                        <label for="shareContacts">Contacts (Followers)</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="shareOnlyExcept" name="shareAudience" value="onlyExcept" />
+                        <label for="shareOnlyExcept">Only Except (Select Followers)</label>
+                    </div>
+                </div>
+                <div class="form-group" id="onlyExceptFollowersContainer" style="display:none; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px;">
+                    <!-- Followers checkboxes will be loaded here -->
+                </div>
+                <button type="submit" class="submit-btn">Post</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script type="module">
+        import { searchUserByEmail, sendFriendRequest, acceptFriendRequest, getUserNotifications, saveMessageToPinata, getChatMessages } from './friendRequest.js';
+
+        // Make functions globally available
+        window.searchUserByEmail = searchUserByEmail;
+        window.sendFriendRequest = sendFriendRequest;
+        window.acceptFriendRequest = acceptFriendRequest;
+        window.getUserNotifications = getUserNotifications;
+        window.saveMessageToPinata = saveMessageToPinata;
+        window.getChatMessages = getChatMessages;
+    </script>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header" id="chatHeader">
+            <h4>Chat</h4>
+            <span class="chat-minimize" id="chatMinimize">&minus;</span>
+        </div>
+        <div class="chat-body">
+            <div class="followers-list" id="followersList">
+                <h5>Your Followers</h5>
+                <!-- Followers will be loaded here -->
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be displayed here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button id="sendMessageBtn">Send</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Homepage DOM fully loaded and parsed');
+
+            // Toggle search toolbox visibility
+            document.getElementById('searchIcon').addEventListener('click', () => {
+                const toolbox = document.getElementById('searchToolbox');
+                toolbox.style.display = toolbox.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close search toolbox
+            document.getElementById('closeSearchBtn').addEventListener('click', () => {
+                document.getElementById('searchToolbox').style.display = 'none';
+                document.getElementById('searchResult').innerHTML = '';
+                document.getElementById('searchInput').value = '';
+            });
+
+            // Initialize WebSocket and chat functionality
+            initWebSocket();
+
+        });
+
+        // Chat functionality variables
+        let ws = null;
+        let currentChatUser = null;
+        let messageHistory = [];
+
+        // Chat UI elements
+        const chatWidget = document.getElementById('chatWidget');
+        const chatHeader = document.getElementById('chatHeader');
+        const chatMinimize = document.getElementById('chatMinimize');
+        const followersList = document.getElementById('followersList');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+        // Get user email from localStorage
+        const userEmail = localStorage.getItem('userEmail') || 'Unknown Email';
+
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            console.log('Initializing WebSocket connection...');
+            try {
+                ws = new WebSocket('ws://127.0.0.1:8080');
+            } catch (error) {
+                console.error('WebSocket initialization error:', error);
+                return;
+            }
+
+            ws.onopen = function(event) {
+                console.log('WebSocket connection established');
+                // Register user with the server
+                ws.send(JSON.stringify({
+                    type: 'register',
+                    userEmail: userEmail
+                }));
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log('Received WebSocket message:', data);
+
+                if (data.type === 'chat_message') {
+                    // Handle incoming message
+                    handleIncomingMessage(data);
+                }
+            };
+
+            ws.onclose = function(event) {
+                console.log('WebSocket connection closed');
+                // Attempt to reconnect after 5 seconds
+                setTimeout(initWebSocket, 5000);
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // Handle incoming messages
+        function handleIncomingMessage(data) {
+            const { from, to, message, timestamp } = data;
+
+            // Only show message if it's for the current chat
+            if (currentChatUser === from || currentChatUser === to) {
+                displayMessage(message, 'received', timestamp);
+            }
+
+            // Store message in history
+            messageHistory.push({
+                from,
+                to,
+                message,
+                timestamp,
+                direction: from === userEmail ? 'sent' : 'received'
+            });
+
+            // Save message to Pinata
+            window.saveMessageToPinata(from, to, message, timestamp);
+        }
+
+        // Display message in chat
+        function displayMessage(message, direction, timestamp) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${direction}`;
+            messageDiv.textContent = message;
+
+            if (timestamp) {
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date(timestamp).toLocaleTimeString();
+                timeDiv.style.fontSize = '10px';
+                timeDiv.style.marginTop = '2px';
+                messageDiv.appendChild(timeDiv);
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Load followers list
+        async function loadFollowers() {
+            console.log('Loading followers...');
+            try {
+                const user = await window.searchUserByEmail(userEmail);
+                console.log('User followersList:', user.followersList);
+                console.log('User followersCount:', user.followersCount);
+                if (!user) {
+                    followersList.innerHTML = '<h5>Your Followers</h5><div>No followers yet</div>';
+                    return;
+                }
+                followersList.innerHTML = `<h5>Your Followers (${user.followersCount || 0})</h5>`;
+
+                if (user.followersList && user.followersList.length > 0) {
+                    // Fetch all follower data concurrently
+                    const followerDataList = await Promise.all(
+                        user.followersList.map(async (followerEmail) => {
+                            try {
+                                return await window.searchUserByEmail(followerEmail);
+                            } catch (err) {
+                                console.error('Error loading follower data for', followerEmail, err);
+                                return null;
+                            }
+                        })
+                    );
+
+                    // Clear followersList except header
+                    followersList.innerHTML = `<h5>Your Followers (${user.followersCount || 0})</h5>`;
+
+                    for (const followerData of followerDataList) {
+                        if (!followerData) continue;
+                        const followerDiv = document.createElement('div');
+                        followerDiv.className = 'follower-item';
+                        followerDiv.style.display = 'flex';
+                        followerDiv.style.alignItems = 'center';
+                        followerDiv.style.cursor = 'pointer';
+
+                        const img = document.createElement('img');
+                        img.src = followerData.profilePicture ? followerData.profilePicture : 'default_image.jpg';
+                        img.alt = followerData.email || 'Follower';
+                        img.style.width = '30px';
+                        img.style.height = '30px';
+                        img.style.borderRadius = '50%';
+                        img.style.marginRight = '10px';
+
+                        const span = document.createElement('span');
+                        span.textContent = followerData.username ? followerData.username : (followerData.email || 'Unknown');
+
+                        followerDiv.appendChild(img);
+                        followerDiv.appendChild(span);
+
+                        followerDiv.addEventListener('click', () => startChat(followerData.email));
+                        followersList.appendChild(followerDiv);
+                    }
+                } else if (user.followersCount && user.followersCount > 0 && (!user.followersList || user.followersList.length === 0)) {
+                    followersList.innerHTML += '<div>Followers count is positive but followers list data is missing. Please contact support.</div>';
+                } else if (user.followersCount && user.followersCount > 0) {
+                    followersList.innerHTML += '<div>Followers list not available</div>';
+                } else {
+                    followersList.innerHTML += '<div>No followers yet</div>';
+                }
+            } catch (error) {
+                console.error('Error loading followers:', error);
+                followersList.innerHTML = '<h5>Your Followers</h5><div>Error loading followers</div>';
+            }
+        }
+
+        // Start chat with a user
+        function startChat(userEmail) {
+            console.log('Starting chat with:', userEmail);
+            currentChatUser = userEmail;
+            chatHeader.querySelector('h4').textContent = `Chat with ${userEmail}`;
+
+            // Clear current messages
+            chatMessages.innerHTML = '';
+
+            // Load message history
+            loadMessageHistory(userEmail);
+        }
+
+        // Load message history from Pinata
+        async function loadMessageHistory(chatUserEmail) {
+            console.log('Loading message history for:', chatUserEmail);
+            try {
+                const messages = await window.getChatMessages(userEmail, chatUserEmail);
+                for (const msg of messages) {
+                    displayMessage(msg.message, msg.direction === 'sent' ? 'sent' : 'received', msg.timestamp);
+                }
+            } catch (error) {
+                console.error('Error loading message history:', error);
+            }
+        }
+
+        // Send message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !currentChatUser) return;
+
+            const timestamp = new Date().toISOString();
+
+            // Send via WebSocket
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'message',
+                    from: userEmail,
+                    to: currentChatUser,
+                    message: message,
+                    timestamp: timestamp
+                }));
+            }
+
+            // Display message locally
+            displayMessage(message, 'sent', timestamp);
+
+            // Store in local history
+            messageHistory.push({
+                from: userEmail,
+                to: currentChatUser,
+                message,
+                timestamp,
+                direction: 'sent'
+            });
+
+            // Save to Pinata
+            window.saveMessageToPinata(userEmail, currentChatUser, message, timestamp);
+
+            // Clear input
+            messageInput.value = '';
+        }
+
+        // Chat UI event listeners
+        chatIcon.addEventListener('click', () => {
+            if (chatWidget.style.display === 'flex') {
+                chatWidget.style.display = 'none';
+            } else {
+                chatWidget.style.display = 'flex';
+                loadFollowers();
+            }
+        });
+
+        chatMinimize.addEventListener('click', () => {
+            chatWidget.style.display = 'none';
+        });
+
+        sendMessageBtn.addEventListener('click', sendMessage);
+
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+
+    <script>
+        // Use globally available functions from the module import above
+        const searchResultDiv = document.getElementById('searchResult');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchToolbox = document.getElementById('searchToolbox');
+
+        let selectedUserEmail = null;
+
+        searchBtn.addEventListener('click', async () => {
+            const email = searchInput.value.trim();
+            if (!email) {
+                searchResultDiv.innerHTML = '<p>Please enter an email to search.</p>';
+                return;
+            }
+            searchResultDiv.innerHTML = 'Searching...';
+
+            try {
+                const user = await window.searchUserByEmail(email);
+                if (!user) {
+                    searchResultDiv.innerHTML = '<p>No user found with this email.</p>';
+                    return;
+                }
+                selectedUserEmail = user.email;
+
+                // Display user info and send friend request button
+                searchResultDiv.innerHTML = `
+                    <p><strong>Username:</strong> ${user.username || user.email}</p>
+                    <img src="${user.profilePicture || 'default_image.jpg'}" alt="Profile Picture" style="max-width:100px; max-height:100px; border-radius: 50%; cursor:pointer;" />
+                    <br/>
+                    <button id="sendFriendRequestBtn" style="margin-top: 10px; padding: 6px 12px;">Send Friend Request</button>
+                    <button id="closeSearchBtn" style="margin-top: 10px; padding: 6px 12px; margin-left: 10px;">Close</button>
+                `;
+
+                document.getElementById('sendFriendRequestBtn').addEventListener('click', async () => {
+                    try {
+                        const currentUserEmail = localStorage.getItem('userEmail');
+                        if (!currentUserEmail) {
+                            alert('You must be logged in to send friend requests.');
+                            return;
+                        }
+                        await window.sendFriendRequest(currentUserEmail, selectedUserEmail);
+                        alert('Friend request sent');
+                        document.getElementById('sendFriendRequestBtn').disabled = true;
+                        document.getElementById('sendFriendRequestBtn').textContent = 'Request Sent';
+                    } catch (err) {
+                        alert('Error sending friend request: ' + err.message);
+                    }
+                });
+
+                document.getElementById('closeSearchBtn').addEventListener('click', () => {
+                    searchResultDiv.innerHTML = '';
+                    searchToolbox.style.display = 'none';
+                    searchInput.value = '';
+                });
+
+            } catch (err) {
+                searchResultDiv.innerHTML = '<p>Error searching user: ' + err.message + '</p>';
+            }
+        });
+    </script>
+
+    <!-- Post Creation Modal JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addPostBtn = document.getElementById('addPostBtn');
+            const postModal = document.getElementById('postModal');
+            const closePostModal = document.getElementById('closePostModal');
+            const postForm = document.getElementById('postForm');
+            const shareOnlyExcept = document.getElementById('shareOnlyExcept');
+            const onlyExceptFollowersContainer = document.getElementById('onlyExceptFollowersContainer');
+            const shareAudienceRadios = document.querySelectorAll('input[name="shareAudience"]');
+            const postsContainer = document.getElementById('postsContainer');
+
+            // Open modal on plus icon click
+            addPostBtn.addEventListener('click', () => {
+                postModal.style.display = 'block';
+                loadFollowersForPost();
+            });
+
+            // Close modal
+            closePostModal.addEventListener('click', () => {
+                postModal.style.display = 'none';
+                postForm.reset();
+                onlyExceptFollowersContainer.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === postModal) {
+                    postModal.style.display = 'none';
+                    postForm.reset();
+                    onlyExceptFollowersContainer.style.display = 'none';
+                }
+            });
+
+            // Handle audience selection
+            shareAudienceRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (shareOnlyExcept.checked) {
+                        onlyExceptFollowersContainer.style.display = 'block';
+                        // Enable checkboxes for selection
+                        setFollowersCheckboxesDisabled(false);
+                    } else if (radio.value === 'contacts' && radio.checked) {
+                        onlyExceptFollowersContainer.style.display = 'block';
+                        // Disable checkboxes for contacts (no selection needed)
+                        setFollowersCheckboxesDisabled(true);
+                    } else {
+                        onlyExceptFollowersContainer.style.display = 'none';
+                    }
+                });
+            });
+
+            // Helper function to enable/disable checkboxes
+            function setFollowersCheckboxesDisabled(disabled) {
+                const checkboxes = onlyExceptFollowersContainer.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.disabled = disabled;
+                    if (disabled) {
+                        cb.checked = true; // auto select all when disabled
+                    } else {
+                        cb.checked = false; // clear selection when enabled
+                    }
+                });
+            }
+
+            // Function to render a post in the posts feed
+            function renderPost(post) {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post-item';
+                postDiv.style.border = '1px solid #ccc';
+                postDiv.style.borderRadius = '8px';
+                postDiv.style.padding = '1rem';
+                postDiv.style.backgroundColor = '#fff';
+
+                // Content text
+                const contentP = document.createElement('p');
+                contentP.textContent = post.content;
+                postDiv.appendChild(contentP);
+
+                // Media files (images/videos)
+                if (post.files && post.files.length > 0) {
+                    const mediaContainer = document.createElement('div');
+                    mediaContainer.style.display = 'flex';
+                    mediaContainer.style.flexWrap = 'wrap';
+                    mediaContainer.style.gap = '0.5rem';
+                    post.files.forEach(file => {
+                        let mediaElement;
+                        if (file.type.startsWith('image/')) {
+                            mediaElement = document.createElement('img');
+                            mediaElement.src = file.url;
+                            mediaElement.style.maxWidth = '100%';
+                            mediaElement.style.borderRadius = '4px';
+                        } else if (file.type.startsWith('video/')) {
+                            mediaElement = document.createElement('video');
+                            mediaElement.src = file.url;
+                            mediaElement.controls = true;
+                            mediaElement.style.maxWidth = '100%';
+                            mediaElement.style.borderRadius = '4px';
+                        }
+                        if (mediaElement) {
+                            mediaElement.style.maxHeight = '200px';
+                            mediaContainer.appendChild(mediaElement);
+                        }
+                    });
+                    postDiv.appendChild(mediaContainer);
+                }
+
+                postsContainer.prepend(postDiv);
+            }
+
+            // Handle form submission
+            postForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const files = document.getElementById('postFiles').files;
+                const content = document.getElementById('postContent').value.trim();
+                const audience = document.querySelector('input[name="shareAudience"]:checked').value;
+                const userEmail = localStorage.getItem('userEmail') || '';
+
+                let selectedFollowers = [];
+                if (audience === 'onlyExcept') {
+                    const checkboxes = document.querySelectorAll('#onlyExceptFollowersContainer input[type="checkbox"]:checked');
+                    selectedFollowers = Array.from(checkboxes).map(cb => cb.value);
+                }
+
+                // Prepare files for upload to Pinata
+                const filesArray = Array.from(files);
+                try {
+                    // Upload files to Pinata and get URLs
+                    const uploadedFiles = [];
+                    for (const file of filesArray) {
+                        const url = await uploadFileToPinata(file);
+                        uploadedFiles.push({ name: file.name, url, type: file.type });
+                    }
+
+                    // Prepare post data
+                    const postData = {
+                        content,
+                        audience,
+                        selectedFollowers,
+                        files: uploadedFiles,
+                        timestamp: new Date().toISOString(),
+                        posterEmail: userEmail
+                    };
+
+                    // Store post data on Pinata
+                    const postUrl = await storePostDataOnPinata(postData);
+
+                    // Add post hash to shared list
+                    const postHash = postUrl.split('/').pop();
+                    await updateSharedPostHashes(postHash);
+
+                    // Render the new post in the feed
+                    renderPost(postData);
+
+                    alert('Post submitted and stored successfully!');
+
+                    // Close modal and reset
+                    postModal.style.display = 'none';
+                    postForm.reset();
+                    onlyExceptFollowersContainer.style.display = 'none';
+
+                } catch (error) {
+                    console.error('Error uploading post:', error);
+                    alert('Failed to submit post. Please try again.');
+                }
+            });
+
+            // Upload a single file to Pinata
+            async function uploadFileToPinata(file) {
+                const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        // Pinata requires the JWT token in Authorization header
+                        Authorization: `Bearer ${getPinataJWT()}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to upload file to Pinata');
+                }
+
+                const data = await response.json();
+                // Use CORS-enabled gateway for file URLs
+                return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+            }
+
+            // Store post metadata on Pinata
+            async function storePostDataOnPinata(postData) {
+                const url = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${getPinataJWT()}`
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to store post data on Pinata');
+                }
+
+                const data = await response.json();
+                // Use CORS-enabled gateway for post data URLs
+                return `https://ipfs.io/ipfs/${data.IpfsHash}`;
+            }
+
+            // Load followers for "only except" option
+            async function loadFollowersForPost() {
+                try {
+                    const user = await window.searchUserByEmail(userEmail);
+                    if (!user || !user.followersList || user.followersList.length === 0) {
+                        onlyExceptFollowersContainer.innerHTML = '<p>No followers to select.</p>';
+                        return;
+                    }
+
+                    onlyExceptFollowersContainer.innerHTML = '<p>Select followers to share with:</p>';
+
+                    const followerDataList = await Promise.all(
+                        user.followersList.map(async (followerEmail) => {
+                            try {
+                                return await window.searchUserByEmail(followerEmail);
+                            } catch (err) {
+                                console.error('Error loading follower data for', followerEmail, err);
+                                return null;
+                            }
+                        })
+                    );
+
+                    for (const followerData of followerDataList) {
+                        if (!followerData) continue;
+
+                        const div = document.createElement('div');
+                        div.style.display = 'flex';
+                        div.style.alignItems = 'center';
+                        div.style.marginBottom = '0.5rem';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = followerData.email;
+                        checkbox.id = `follower_${followerData.email}`;
+
+                        const label = document.createElement('label');
+                        label.htmlFor = `follower_${followerData.email}`;
+                        label.style.display = 'flex';
+                        label.style.alignItems = 'center';
+                        label.style.cursor = 'pointer';
+
+                        const img = document.createElement('img');
+                        img.src = followerData.profilePicture ? followerData.profilePicture : 'default_image.jpg';
+                        img.alt = followerData.email;
+                        img.style.width = '30px';
+                        img.style.height = '30px';
+                        img.style.borderRadius = '50%';
+                        img.style.marginRight = '10px';
+
+                        const span = document.createElement('span');
+                        span.textContent = followerData.username ? followerData.username : followerData.email;
+
+                        label.appendChild(img);
+                        label.appendChild(span);
+
+                        div.appendChild(checkbox);
+                        div.appendChild(label);
+
+                        onlyExceptFollowersContainer.appendChild(div);
+                    }
+                } catch (error) {
+                    console.error('Error loading followers for post:', error);
+                    onlyExceptFollowersContainer.innerHTML = '<p>Error loading followers.</p>';
+                }
+            }
+
+            // Shared list IPFS hash (will be updated when initialized)
+            let SHARED_LIST_IPFS_HASH = localStorage.getItem('sharedListIPFSHash') || 'QmYourSharedListHashHere'; // Load from localStorage or use placeholder
+
+            // Fetch the shared list of post IPFS hashes
+            async function fetchSharedPostHashes() {
+                // If still placeholder, return empty array
+                if (SHARED_LIST_IPFS_HASH === 'QmYourSharedListHashHere') {
+                    return [];
+                }
+                try {
+                    // Use a CORS-enabled gateway
+                    const url = `https://ipfs.io/ipfs/${SHARED_LIST_IPFS_HASH}`;
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (!response.ok) {
+                        if (response.status === 429) {
+                            console.warn('Rate limited by IPFS gateway, retrying with delay...');
+                            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+                            return fetchSharedPostHashes(); // Retry
+                        }
+                        throw new Error(`Failed to fetch shared post list: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.postHashes || [];
+                } catch (error) {
+                    console.error('Error fetching shared post hashes:', error);
+                    // Try alternative gateway if main one fails
+                    try {
+                        console.log('Trying alternative gateway...');
+                        const altUrl = `https://cloudflare-ipfs.com/ipfs/${SHARED_LIST_IPFS_HASH}`;
+                        const altResponse = await fetch(altUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (altResponse.ok) {
+                            const data = await altResponse.json();
+                            return data.postHashes || [];
+                        }
+                    } catch (altError) {
+                        console.error('Alternative gateway also failed:', altError);
+                    }
+                    return [];
+                }
+            }
+
+            // Update the shared list by adding a new post hash
+            async function updateSharedPostHashes(newHash) {
+                try {
+                    const currentHashes = await fetchSharedPostHashes();
+                    currentHashes.push(newHash);
+                    const updatedData = { postHashes: currentHashes };
+
+                    const url = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${getPinataJWT()}`
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update shared post list');
+                    }
+
+                    const data = await response.json();
+                    // Update SHARED_LIST_IPFS_HASH with the new hash
+                    SHARED_LIST_IPFS_HASH = data.IpfsHash;
+                    // Store in localStorage for persistence
+                    localStorage.setItem('sharedListIPFSHash', SHARED_LIST_IPFS_HASH);
+                    console.log('Updated shared list with new hash:', newHash, 'New IPFS hash:', SHARED_LIST_IPFS_HASH);
+                } catch (error) {
+                    console.error('Error updating shared post hashes:', error);
+                }
+            }
+
+            // Fetch post metadata from IPFS
+            async function fetchPostData(ipfsHash) {
+                try {
+                    // Use CORS-enabled gateway
+                    const url = `https://ipfs.io/ipfs/${ipfsHash}`;
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (!response.ok) {
+                        if (response.status === 429) {
+                            console.warn('Rate limited by IPFS gateway for post data, retrying with delay...');
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            return fetchPostData(ipfsHash); // Retry
+                        }
+                        throw new Error(`Failed to fetch post data: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error fetching post data:', error);
+                    // Try alternative gateway
+                    try {
+                        console.log('Trying alternative gateway for post data...');
+                        const altUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsHash}`;
+                        const altResponse = await fetch(altUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (altResponse.ok) {
+                            return await altResponse.json();
+                        }
+                    } catch (altError) {
+                        console.error('Alternative gateway also failed for post data:', altError);
+                    }
+                    return null;
+                }
+            }
+
+            // Determine if the post should be displayed to the current user
+            async function shouldDisplayPost(postData) {
+                const currentUserEmail = localStorage.getItem('userEmail') || '';
+                if (!postData || !postData.audience) return false;
+
+                if (postData.audience === 'everyone') {
+                    return true;
+                } else if (postData.audience === 'contacts') {
+                    // Check if current user is in the poster's followers
+                    try {
+                        const poster = await window.searchUserByEmail(postData.posterEmail || ''); // Assuming posterEmail is added to postData
+                        return poster && poster.followersList && poster.followersList.includes(currentUserEmail);
+                    } catch (error) {
+                        console.error('Error checking contacts:', error);
+                        return false;
+                    }
+                } else if (postData.audience === 'onlyExcept') {
+                    // Show only if current user is NOT in selectedFollowers
+                    return !postData.selectedFollowers.includes(currentUserEmail);
+                }
+                return false;
+            }
+
+            // Fetch and render posts for the current user
+            async function fetchAndRenderPosts() {
+                postsContainer.innerHTML = '<p>Loading posts...</p>';
+                try {
+                    const postHashes = await fetchSharedPostHashes();
+                    postsContainer.innerHTML = '';
+
+                    for (const hash of postHashes) {
+                        const postData = await fetchPostData(hash);
+                        if (postData && await shouldDisplayPost(postData)) {
+                            renderPost(postData);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching posts:', error);
+                    postsContainer.innerHTML = '<p>Error loading posts.</p>';
+                }
+            }
+
+            // Initial fetch and render posts on page load
+            fetchAndRenderPosts();
+        });
+    </script>
+
+</body>
+</html>
